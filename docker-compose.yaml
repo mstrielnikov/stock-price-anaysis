@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  namenode:
+    image: sequenceiq/hadoop-docker:2.7.1
+    container_name: namenode
+    hostname: namenode
+    ports:
+      - "50070:50070"
+    volumes:
+      - ./hadoop-namenode:/hadoop/dfs/name
+    environment:
+      - CLUSTER_NAME=hadoop-cluster
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
+      - HDFS_CONF_dfs_namenode_name_dir=file:///hadoop/dfs/name
+      - HDFS_CONF_dfs_datanode_data_dir=file:///hadoop/dfs/data
+    command: /etc/bootstrap.sh -namenode
+
+  datanode1:
+    image: sequenceiq/hadoop-docker:2.7.1
+    container_name: datanode1
+    hostname: datanode1
+    links:
+      - namenode
+    volumes:
+      - ./hadoop-datanode1:/hadoop/dfs/data
+    environment:
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
+      - HDFS_CONF_dfs_datanode_data_dir=file:///hadoop/dfs/data
+      - HADOOP_DATANODE_OPTS=-Dhadoop.tmp.dir=/hadoop/dfs/data
+    command: /etc/bootstrap.sh -datanode
+
+  datanode2:
+    image: sequenceiq/hadoop-docker:2.7.1
+    container_name: datanode2
+    hostname: datanode2
+    links:
+      - namenode
+    volumes:
+      - ./hadoop-datanode2:/hadoop/dfs/data
+    environment:
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
+      - HDFS_CONF_dfs_datanode_data_dir=file:///hadoop/dfs/data
+      - HADOOP_DATANODE_OPTS=-Dhadoop.tmp.dir=/hadoop/dfs/data
+    command: /etc/bootstrap.sh -datanode
+
+  spark:
+    image: bde2020/spark-worker:2.4.5-hadoop2.7
+    container_name: spark
+    hostname: spark
+    depends_on:
+      - namenode
+    environment:
+      - SPARK_MASTER_URL=spark://namenode:7077
+      - SPARK_WORKER_MEMORY=2g
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
+      - HADOOP_CONF_hadoop_rpc_protection=simple
+      - HADOOP_CONF_hadoop_security_authentication=simple
+      - HADOOP_CONF_dfs_permissions_enable=false
+      - HADOOP_CONF_dfs_replication=1
+    volumes:
+      - ./scripts:/scripts
+    command: bin/spark-class org.apache.spark.deploy.worker.Worker spark://namenode:7077
+
+  client:
+    image: bde2020/hadoop-base:2.0.0-hadoop2.7.4-java8
+    container_name: client
+    hostname: client
+    depends_on:
+      - namenode
+    environment:
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
+      - HADOOP_CONF_hadoop_rpc_protection=simple
+      - HADOOP_CONF_hadoop_security_authentication=simple
+      - HADOOP_CONF_dfs
