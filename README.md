@@ -1,6 +1,6 @@
 # Stock price's Historical Data Visualization
 
-This code retrieves historical price data from Binance and visualizes it as a scatter plot using PySpark, Matplotlib and visualize in Jupyter Notebook.
+This code retrieves historical price data from Binance and visualizes historycal asset cycles as a scatter plot using PySpark, Matplotlib and visualize in Jupyter Notebook.
 
 See notebook [example](./BTC_STOCK_PRICE_ANALYSIS.ipynb)
 
@@ -25,3 +25,6 @@ export BINANCE_API_SECRET="********"
 # Demo
 
  ![](./pics/index.png)
+
+ # References:
+* [Binance API](https://python-binance.readthedocs.io/en/latest/binance.html?highlight=get_all_orders)
