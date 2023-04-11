@@ -2,11 +2,10 @@ from os import getenv
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, to_utc_timestamp, udf
 from pyspark.sql.types import TimestampType
-import matplotlib.pypot as plt
+import matplotlib.pyplot as plt
 import datetime
 import binance
-
-
+import pandas
 
 
 ApiKey = getenv("BINANCE_API_KEY")
@@ -43,6 +42,9 @@ df = df.withColumn("timestamp", from_bigint_timestamp_udf(col("timestamp")))
 df.show()
 
 pandas_df = df.select(col("timestamp"), col("close")).toPandas()
+
+# Convert timestamp column to datetime datatype and fix FutureWarning
+pandas_df["timestamp"] = pandas.to_datetime(pandas_df["timestamp"], format='%Y-%m-%d %H:%M:%S').astype("datetime64[ns]", copy=False)
 
 # Build the scatter plot
 plt.scatter(pandas_df["timestamp"], pandas_df["close"])
