@@ -1,10 +1,12 @@
+from os import getenv
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, to_utc_timestamp, udf
 from pyspark.sql.types import TimestampType
-from os import getenv
+import matplotlib.pypot as plt
 import datetime
-import matplotlib.pyplot as plt
 import binance
+
+
 
 
 ApiKey = getenv("BINANCE_API_KEY")
