@@ -23,8 +23,11 @@ export BINANCE_API_SECRET="********"
 ```
 
 # Demo
+<img title="Demo" src="./pics/index.png">
 
- ![](./pics/index.png)
+<img src="./pics/plot_btc.png"
+alt="btc stocs price periods"
+style="float: left; margin-right: 10px;" />                    
 
  # References:
 * [Binance API](https://python-binance.readthedocs.io/en/latest/binance.html?highlight=get_all_orders)
